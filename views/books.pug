@@ -1,0 +1,15 @@
+doctype html
+html
+  head
+    title= title
+  body
+    h1 My Personal Library
+    if data && data.length
+      ul
+        each book in data
+          li
+            strong #{book.properties.name}
+            |  - #{book.properties.price} - #{book.properties.publisher}
+    else
+      p No books found in your library yet!
+    a(href="/form") Add a new book
