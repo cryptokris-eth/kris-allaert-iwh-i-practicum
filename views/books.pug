@@ -1,7 +1,7 @@
 doctype html
 html
   head
-    title= title
+    title= "My personal Library"
     style
       | table {
       |   width: 50%;
@@ -21,7 +21,9 @@ html
       | }
   body
     h1 My Personal Library
-    a(href="/form") Add to this table
+    
+    a(href="/form") Add a new book
+    
     if data && data.length
       table
         thead
@@ -29,12 +31,14 @@ html
             th Title
             th Price
             th Publisher
+            th Action
         tbody
           each book in data
             tr
               td #{book.properties.name}
               td #{book.properties.price}
               td #{book.properties.publisher}
+              td
+                a(href=`/edit/${book.id}`) Edit
     else
       p No books found in your library yet!
-    

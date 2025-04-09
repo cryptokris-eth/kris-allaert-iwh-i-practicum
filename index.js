@@ -30,14 +30,41 @@ app.get('/', async (req, res) => {
     }
 });
 
-// ROUTE 2 - form to create
+// ROUTE 2 - create or update a book record
 
 app.get('/form', (req, res) => {
-    res.render('book-form', { title: 'Add a Book | HubSpot APIs' });
+    res.render('book-form', { 
+        title: 'Add a Book | HubSpot APIs', 
+        action: '/form', 
+        method: 'POST',
+        book: {} // empty object for a new book
+    });
 });
 
-// ROUTE 3 - Create the book and redirect to homepage
+app.get('/edit/:id', async (req, res) => {
+    const bookId = req.params.id;
+    const bookUrl = `https://api.hubspot.com/crm/v3/objects/books/${bookId}?properties=name,price,publisher`;
+    const headers = {
+        Authorization: `Bearer ${PRIVATE_APP_ACCESS}`,
+        'Content-Type': 'application/json'
+    };
+    try {
+        const resp = await axios.get(bookUrl, { headers });
+        const book = resp.data;
+        res.render('book-form', { 
+            title: 'Edit Book | HubSpot APIs', 
+            action: `/edit/${bookId}`, 
+            method: 'POST',
+            book: book.properties //fill form with current properties
+        });
+    } catch (error) {
+        console.error('Error retrieving book:', error.response ? error.response.data : error.message);
+        res.status(500).send('Error loading book');
+    }
+});
 
+
+// ROUTE 3 - create new book or update existing in HS
 app.post('/form', async (req, res) => {
     const newBook = {
         properties: {
@@ -56,56 +83,34 @@ app.post('/form', async (req, res) => {
         await axios.post(createBookUrl, newBook, { headers });
         res.redirect('/');
     } catch (error) {
-        console.error(error);
-        res.status(500).send('Error creating book');
+        console.error('API error when creating:', error.response ? error.response.data : error.message);
+        res.status(500).send('Error creating book: ' + (error.response ? error.response.data.message : error.message));
     }
 });
 
-/** 
-* * This is sample code to give you a reference for how you should structure your calls. 
-
-* * App.get sample
-app.get('/contacts', async (req, res) => {
-    const contacts = 'https://api.hubspot.com/crm/v3/objects/contacts';
-    const headers = {
-        Authorization: `Bearer ${PRIVATE_APP_ACCESS}`,
-        'Content-Type': 'application/json'
-    }
-    try {
-        const resp = await axios.get(contacts, { headers });
-        const data = resp.data.results;
-        res.render('contacts', { title: 'Contacts | HubSpot APIs', data });      
-    } catch (error) {
-        console.error(error);
-    }
-});
-
-* * App.post sample
-app.post('/update', async (req, res) => {
-    const update = {
+app.post('/edit/:id', async (req, res) => {
+    const bookId = req.params.id;
+    const updatedBook = {
         properties: {
-            "favorite_book": req.body.newVal
+            book_name: req.body.name,
+            name: req.body.name,
+            price: req.body.price,
+            publisher: req.body.publisher
         }
-    }
-
-    const email = req.query.email;
-    const updateContact = `https://api.hubapi.com/crm/v3/objects/contacts/${email}?idProperty=email`;
+    };
+    const updateBookUrl = `https://api.hubspot.com/crm/v3/objects/books/${bookId}`;
     const headers = {
         Authorization: `Bearer ${PRIVATE_APP_ACCESS}`,
         'Content-Type': 'application/json'
     };
-
-    try { 
-        await axios.patch(updateContact, update, { headers } );
-        res.redirect('back');
-    } catch(err) {
-        console.error(err);
+    try {
+        await axios.patch(updateBookUrl, updatedBook, { headers });
+        res.redirect('/');
+    } catch (error) {
+        console.error('API error when updating:', error.response ? error.response.data : error.message);
+        res.status(500).send('Error updating book: ' + (error.response ? error.response.data.message : error.message));
     }
-
 });
-*/
-
-
 
 
 // * Localhost

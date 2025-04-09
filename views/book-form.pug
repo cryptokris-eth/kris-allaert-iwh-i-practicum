@@ -33,25 +33,25 @@ html
       |   background-color: #45a049;
       | }
   body
-    h1 Add a New Book
-    form(method="POST" action="/form")
+    h1= method === 'POST' && !book.book_name ? 'Add a New Book' : 'Edit Book'
+    form(method=method action=action)
       table
         tr
           th
             label(for="name") Book Title
           td
-            input(type="text" name="name" id="name" required)
+            input(type="text" name="name" id="name" value=book.name || '' required)
         tr
           th
             label(for="price") Price
           td
-            input(type="number" name="price" id="price" step="0.01" required)
+            input(type="number" name="price" id="price" step="0.01" value=book.price || '' required)
         tr
           th
             label(for="publisher") Publisher
           td
-            input(type="text" name="publisher" id="publisher" required)
+            input(type="text" name="publisher" id="publisher" value=book.publisher || '' required)
         tr
           td(colspan="2")
-            button(type="submit") Add Book
+            button(type="submit")= method === 'POST' && !book.name ? 'Add Book' : 'Update Book'
     a(href="/") Back to Library
