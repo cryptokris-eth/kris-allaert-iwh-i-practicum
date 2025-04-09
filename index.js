@@ -9,10 +9,9 @@ app.use(express.static(__dirname + '/public'));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-// * Please DO NOT INCLUDE the private app access token in your repo. Don't do this practicum in your normal account.
 const PRIVATE_APP_ACCESS = process.env.PRIVATE_APP_ACCESS;
 
-// TODO: ROUTE 1 - Create a new app.get route for the homepage to call your custom object data. Pass this data along to the front-end and create a new pug template in the views folder.
+// ROUTE 1
 
 app.get('/', async (req, res) => {
     const booksUrl = 'https://api.hubspot.com/crm/v3/objects/books?properties=name,price,publisher';
@@ -23,7 +22,7 @@ app.get('/', async (req, res) => {
     try {
         const resp = await axios.get(booksUrl, { headers });
         const data = resp.data.results; // Lijst van Books
-        console.log('Raw API:', data); //log to check the output
+        //console.log('Raw API:', data); //log to check the output
         res.render('books', { title: 'My Personal Library | HubSpot APIs', data });
     } catch (error) {
         console.error(error);
@@ -31,13 +30,35 @@ app.get('/', async (req, res) => {
     }
 });
 
-// TODO: ROUTE 2 - Create a new app.get route for the form to create or update new custom object data. Send this data along in the next route.
+// ROUTE 2 - form to create or update
 
-// * Code for Route 2 goes here
+app.get('/form', (req, res) => {
+    res.render('book-form', { title: 'Add a Book | HubSpot APIs' });
+});
 
-// TODO: ROUTE 3 - Create a new app.post route for the custom objects form to create or update your custom object data. Once executed, redirect the user to the homepage.
+// ROUTE 3 - Create the book and redirect to homepage
 
-// * Code for Route 3 goes here
+app.post('/form', async (req, res) => {
+    const newBook = {
+        properties: {
+            name: req.body.name,
+            price: req.body.price,
+            publisher: req.body.publisher
+        }
+    };
+    const createBookUrl = 'https://api.hubspot.com/crm/v3/objects/books';
+    const headers = {
+        Authorization: `Bearer ${PRIVATE_APP_ACCESS}`,
+        'Content-Type': 'application/json'
+    };
+    try {
+        await axios.post(createBookUrl, newBook, { headers });
+        res.redirect('/');
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Error creating book');
+    }
+});
 
 /** 
 * * This is sample code to give you a reference for how you should structure your calls. 
