@@ -2,14 +2,39 @@ doctype html
 html
   head
     title= title
+    style
+      | table {
+      |   width: 80%;
+      |   border-collapse: collapse;
+      |   margin: 20px 0;
+      | }
+      | th, td {
+      |   border: 1px solid #ddd;
+      |   padding: 8px;
+      |   text-align: left;
+      | }
+      | th {
+      |   background-color: #f2f2f2;
+      | }
+      | tr:nth-child(even) {
+      |   background-color: #f9f9f9;
+      | }
   body
     h1 My Personal Library
+    a(href="/form") Add a new book/Update an existing book 
     if data && data.length
-      ul
-        each book in data
-          li
-            strong #{book.properties.name}
-            |  - #{book.properties.price} - #{book.properties.publisher}
+      table
+        thead
+          tr
+            th Title
+            th Price
+            th Publisher
+        tbody
+          each book in data
+            tr
+              td #{book.properties.name}
+              td #{book.properties.price}
+              td #{book.properties.publisher}
     else
       p No books found in your library yet!
-    a(href="/form") Add a new book
+    
