@@ -30,7 +30,7 @@ app.get('/', async (req, res) => {
     }
 });
 
-// ROUTE 2 - form to create or update
+// ROUTE 2 - form to create
 
 app.get('/form', (req, res) => {
     res.render('book-form', { title: 'Add a Book | HubSpot APIs' });
