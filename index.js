@@ -41,6 +41,7 @@ app.get('/form', (req, res) => {
 app.post('/form', async (req, res) => {
     const newBook = {
         properties: {
+            book_name: req.body.name,
             name: req.body.name,
             price: req.body.price,
             publisher: req.body.publisher
