@@ -1,7 +1,7 @@
 doctype html
 html
   head
-    title= "Update Custom Object Form | Integrating With HubSpot I Practicum"
+    title= method === 'POST' && !book.name ? 'New Custom Object Form | Integrating With HubSpot I Practicum' : 'Update Custom Object Form | Integrating With HubSpot I Practicum'
     style
       | table {
       |   width: 20%;
@@ -33,7 +33,7 @@ html
       |   background-color: #45a049;
       | }
   body
-    h1= method === 'POST' && !book.book_name ? 'Add a New Book' : 'Edit Book'
+    h1= method === 'POST' && !book.name ? 'Add a New Book' : 'Update existing Book'
     form(method=method action=action)
       table
         tr
